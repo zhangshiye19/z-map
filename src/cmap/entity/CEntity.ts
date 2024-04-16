@@ -13,7 +13,8 @@ export default class CEntity extends Cesium.Entity{
     positionType: PositionType;
     targetObj: object;
     targetProperty: string;
-    eventPositionChanged: Cesium.Event;
+    eventPositionChanged: Cesium.Event;  // 似乎不是很有必要
+    children: CEntity[];
 
     constructor(coordinates: Cesium.Cartesian3[],options?: Cesium.Entity.ConstructorOptions) {
         super(options)
@@ -22,7 +23,16 @@ export default class CEntity extends Cesium.Entity{
         this.positionType = PositionType.Constant;
         this.targetObj = this; // 目标代表所要更新的对象与属性
         this.targetProperty = 'position';
-        this.eventPositionChanged = new Cesium.Event()
+        this.eventPositionChanged = new Cesium.Event();
+        this.children = [];
+    }
+
+    active() {
+        this.children.forEach((child) => (child.show = true))
+    }
+
+    deactive() {
+        this.children.forEach((child) => (child.show = false))
     }
 
     set coordinates(coordinates: Cesium.Cartesian3[]) {
