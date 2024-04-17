@@ -9,7 +9,7 @@ export default class CMap {
 
     viewer: Cesium.Viewer;
     dsMap: Map<string, Cesium.DataSource>;
-    eventMap: Map<string, Function[]>;
+    eventMap: Map<string, (() => void)[]>;
 
     constructor(container: Element | string) {
         const imageryProvider = new Cesium.WebMapTileServiceImageryProvider({
@@ -48,7 +48,7 @@ export default class CMap {
                 const entity = this.viewer.scene.pick(e.position)
                 if (entity && entity.id) {
                     // callback(entity.id)
-                    const fns = this.eventMap.get(t) as Function[];
+                    const fns = this.eventMap.get(t) as ((entity: CEntity) => void)[];
                     fns.forEach((fn => {
                         fn(entity)
                     }))
@@ -63,7 +63,7 @@ export default class CMap {
     }
 
     removeEventListener(t: CMapEventType, callback: (entity: CEntity) => void) {
-        const fns = this.eventMap.get(t) as Function[];
+        const fns = this.eventMap.get(t) as [];
         this.eventMap.set(t, fns.filter(value => value != callback))
     }
 }
